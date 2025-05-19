@@ -1,0 +1,12 @@
+// config.js
+const headers = require('./headers.config.json');
+const rewrites = require('./rewrites.config.json');
+const redirects = require('./redirects.config.json');
+
+module.exports = {
+  ...headers,
+  ...rewrites,
+  ...redirects,
+  trailingSlash: false,
+  directoryListing: false
+};
