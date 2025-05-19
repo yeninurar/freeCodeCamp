@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/certification/**",
+      "destination": "/certification/index.html"
+    }
+  ]
+}
