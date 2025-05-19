@@ -1,2 +1,62 @@
-Hapus file solusi SRP yang tidak diperlukan
+pisahkan ke 3 file/fungsi yang masing-masing menangani satu tanggung jawab:
 
+
+1. loadEnvConfig.js → hanya untuk membaca .env
+js
+Salin
+Edit
+// utils/loadEnvConfig.js
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
+
+function loadEnvConfig() {
+  try {
+    const filePath = path.resolve(__dirname, '..', '.env');
+    return dotenv.parse(fs.readFileSync(filePath));
+  } catch (e) {
+    console.warn('[env warning] .env file not loaded');
+    return {};
+  }
+}
+
+module.exports = loadEnvConfig;
+
+
+2. getLoopbackModulePath.js → hanya untuk path hack
+js
+Salin
+Edit
+// utils/getLoopbackModulePath.js
+const path = require('path');
+
+function getLoopbackModulePath() {
+  return path.resolve(__dirname, '../node_modules/.pnpm/node_modules');
+}
+
+module.exports = getLoopbackModulePath;
+
+
+3. ecosystem.config.js → bersih dan fokus hanya pada konfigurasi PM2
+js
+Salin
+Edit
+const loadEnvConfig = require('./utils/loadEnvConfig');
+const getLoopbackModulePath = require('./utils/getLoopbackModulePath');
+
+const env = loadEnvConfig();
+const loopbackModuleResolutionHack = getLoopbackModulePath();
+
+module.exports = {
+  apps: [
+    {
+      script: './lib/production-start.js',
+      cwd: __dirname,
+      env: { ...env, NODE_PATH: loopbackModuleResolutionHack },
+      max_memory_restart: '600M',
+      instances: 'max',
+      exec_mode: 'cluster',
+      name: env.DEPLOYMENT_ENV === 'staging' ? 'dev' : 'org'
+    }
+  ]
+};
