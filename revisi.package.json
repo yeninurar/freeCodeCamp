@@ -1,0 +1,40 @@
+{
+  "scripts": {
+    // 🔧 Build & Shared Data
+    "create:shared": "node tools/scripts/build-shared-data.js",
+    "build:curriculum": "ts-node --esm ./tools/scripts/build/create-curriculum",
+    "build:workers": "ts-node --esm ./tools/scripts/build/create-workers",
+    "build:all": "npm-run-all create:shared build:curriculum build:workers",
+
+    // 🚀 Development
+    "develop:server": "node ./api-server/server.js",
+    "serve:client": "node ./client/server/index.js",
+    "develop": "npm-run-all -p develop:server serve:client",
+
+    // 🔍 Testing
+    "test:unit": "vitest run --config ./vitest.unit.config.ts",
+    "test:e2e": "vitest run --config ./vitest.e2e.config.ts",
+    "test:integration": "vitest run --config ./vitest.integration.config.ts",
+    "test:all": "npm-run-all test:unit test:integration test:e2e",
+
+    // 🎯 Test Full Build
+    "test:build": "npm-run-all build:all test:all",
+
+    // 🎨 Linting
+    "lint:js": "eslint \"**/*.{js,jsx}\" --quiet",
+    "lint:ts": "eslint \"**/*.{ts,tsx}\" --quiet",
+    "lint:css": "stylelint \"**/*.{css,scss}\"",
+    "lint:all": "npm-run-all -p lint:js lint:ts lint:css",
+
+    // 🧹 Clean & Setup
+    "clean": "rimraf node_modules && rimraf apps/**/dist",
+    "install:deps": "pnpm install",
+    "setup": "npm-run-all clean install:deps",
+
+    // 🚀 All-in-one (Optional Alias Scripts)
+    "start:client": "npm run serve:client",
+    "start:server": "npm run develop:server",
+    "start:full": "npm-run-all create:shared -p start:client start:server",
+    "clean-and-develop": "npm-run-all clean install:deps develop"
+  }
+}
